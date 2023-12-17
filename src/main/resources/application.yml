@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/mydatabase
+    username: myuser
+    password: secret
+
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML

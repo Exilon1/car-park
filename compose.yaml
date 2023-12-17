@@ -1,9 +1,11 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres'
+    container_name: postgres_carpark
     environment:
       - 'POSTGRES_DB=mydatabase'
       - 'POSTGRES_PASSWORD=secret'
       - 'POSTGRES_USER=myuser'
     ports:
-      - '5432'
+      - '5433:5432'
+    restart: always
