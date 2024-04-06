@@ -12,3 +12,10 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     mode: HTML
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    properties:
+#      hibernate:
+#        default-schema: my_schema

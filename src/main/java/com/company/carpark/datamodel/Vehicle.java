@@ -1,15 +1,15 @@
 package com.company.carpark.datamodel;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +17,6 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vehicle {
@@ -25,7 +24,7 @@ public class Vehicle {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "id", nullable = false)
-  private UUID id;
+  private Long id;
 
   @Column(name = "price")
   private BigDecimal price;
@@ -35,4 +34,7 @@ public class Vehicle {
 
   @Column(name = "mileage")
   private Double mileage;
+
+  @OneToOne(mappedBy = "vehicle", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  private Brand brand;
 }

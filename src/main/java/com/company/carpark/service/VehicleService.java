@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class VehicleService {
 
   @Autowired
-  private VehicleRepository vehicleRepository;  // Предполагается, что у вас есть репозиторий для работы с данными
+  private VehicleRepository vehicleRepository;
 
   public List<Vehicle> getAllVehicles() {
-    return vehicleRepository.findAll();
+    return vehicleRepository.findAllByOrderById();
   }
 }

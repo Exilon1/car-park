@@ -7,23 +7,33 @@
 <body>
 <h2>Vehicle List</h2>
 
-<table border="1">
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>Price</th>
-    <th>Release Date</th>
-    <th>Mileage</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="vehicle : ${vehicles}">
-    <td th:text="${vehicle.id}"></td>
-    <td th:text="${vehicle.price}"></td>
-    <td th:text="${vehicle.year}"></td>
-    <td th:text="${vehicle.mileage}"></td>
-  </tr>
-  </tbody>
-</table>
+<form th:action="@{/addVehicleAndBrand}" method="post">
+  <button type="submit">Добавить транспортное средство</button>
+  <table border="1">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Price</th>
+      <th>Release Date</th>
+      <th>Mileage</th>
+      <th>Brand</th>
+      <th>Brand ID</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="vehicle : ${vehicles}">
+      <td th:text="${vehicle.id}"></td>
+      <td th:text="${vehicle.price}"></td>
+      <td th:text="${vehicle.year}"></td>
+      <td th:text="${vehicle.mileage}"></td>
+      <td th:text="${vehicle.brand != null} ? ${vehicle.brand.name} : 'No Brand'"></td>
+      <td th:text="${vehicle.brand != null} ? ${vehicle.brand.id} : ''"></td>
+      <td><a th:href="@{'/editVehicle/' + ${vehicle.id}}">Edit</a></td>
+      <td><a th:href="@{'/deleteVehicle/' + ${vehicle.id}}">Delete</a></td>
+    </tr>
+    </tbody>
+  </table>
+</form>
+
 </body>
 </html>

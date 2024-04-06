@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Edit Vehicle and Brand</title>
+</head>
+<body>
+
+<h2>Edit Vehicle</h2>
+<form th:action="@{/saveVehicleAndBrand}" th:object="${form}" method="post">
+  <input type="hidden" th:field="*{vehicle.id}"/>
+  <label>Price: <input type="text" th:field="*{vehicle.price}"/></label><br/>
+  <label>Release Date: <input type="text" th:field="*{vehicle.year}"/></label><br/>
+  <label>Mileage: <input type="text" th:field="*{vehicle.mileage}"/></label><br/>
+  <input type="hidden" th:field="*{brand.id}"/>
+  <input type="hidden" th:field="*{brand.vehicle}"/>
+  <label>Brand name: <input type="text" th:field="*{brand.name}"/></label><br/>
+  <label>Type: <input type="text" th:field="*{brand.type}"/></label><br/>
+  <label>Count of Seats: <input type="text" th:field="*{brand.countOfSeats}"/></label><br/>
+  <label>Capacity: <input type="text" th:field="*{brand.capacity}"/></label><br/>
+  <label>Tank: <input type="text" th:field="*{brand.tank}"/></label><br/>
+  <input type="submit" value="Save Vehicle"/>
+</form>
+
+</body>
+</html>
