@@ -3,6 +3,7 @@ package com.company.carpark.datamodel;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Getter
@@ -35,6 +37,9 @@ public class Vehicle {
   @Column(name = "mileage")
   private Double mileage;
 
-  @OneToOne(mappedBy = "vehicle", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  @OneToOne(mappedBy = "vehicle",
+      cascade = CascadeType.REMOVE,
+      orphanRemoval = true,
+      fetch = FetchType.LAZY)
   private Brand brand;
 }

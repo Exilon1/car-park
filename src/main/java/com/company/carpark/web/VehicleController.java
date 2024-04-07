@@ -49,25 +49,31 @@ public class VehicleController {
   }
 
   @GetMapping("/editVehicle/{id}")
-  public String showEditForm(@PathVariable Long id, Model model) {
+  public String showEditVehicleForm(@PathVariable Long id, Model model) {
     Vehicle vehicle = vehicleRepository.findById(id).orElse(null);
+    List<Brand> brands = brandRepository.findAll();
 
     if (vehicle != null) {
-      Brand brand = vehicle.getBrand();
-
-      if (brand == null) {
-        brand = new Brand();
-        brand.setVehicle(vehicle);
-      }
-
       VehicleAndBrandForm form = new VehicleAndBrandForm();
       form.setVehicle(vehicle);
-      form.setBrand(brand);
+      form.setBrands(brands);
 
       model.addAttribute("form", form);
     }
 
     return "edit-vehicle";
+  }
+
+  @GetMapping("/editBrand/{id}")
+  public String showEditBrandForm(@PathVariable Long id, Model model) {
+    Brand brand = brandRepository.findById(id).orElse(null);
+
+    if (brand != null) {
+      BrandForm brandForm = BrandForm.builder().brand(brand).build();
+      model.addAttribute("form", brandForm);
+    }
+
+    return "edit-brand";
   }
 
   @GetMapping("/deleteVehicle/{id}")
@@ -83,25 +89,33 @@ public class VehicleController {
 
     Vehicle vehicle = new Vehicle();
     Brand brand = new Brand();
+    vehicle.setBrand(brand);
 
     form.setVehicle(vehicle);
-    form.setBrand(brand);
 
     model.addAttribute("form", form);
 
-    return "edit-vehicles";
+    return "create-vehicle_with_brands";
   }
 
   @Transactional
   @PostMapping("/saveVehicleAndBrand")
   public String saveVehicleAndBrand(@ModelAttribute("form") VehicleAndBrandForm form) {
     Vehicle vehicle = form.getVehicle();
-    Brand brand = form.getBrand();
+    Brand brand = vehicle.getBrand();
 
     vehicleRepository.save(vehicle);
     brand.setVehicle(vehicle);
     brandRepository.save(brand);
 
     return "redirect:/vehicles";
+  }
+
+  @Transactional
+  @PostMapping("/saveBrand")
+  public String saveBrand(@ModelAttribute("form") BrandForm form) {
+    brandRepository.save(form.getBrand());
+
+    return "redirect:/brands";
   }
 }

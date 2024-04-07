@@ -29,6 +29,7 @@
     <td th:text="${brand.countOfSeats}"></td>
     <td th:text="${brand.capacity}"></td>
     <td th:text="${brand.tank}"></td>
+    <td><a th:href="@{'/editBrand/' + ${brand.id}}">Edit</a></td>
   </tr>
   </tbody>
 </table>

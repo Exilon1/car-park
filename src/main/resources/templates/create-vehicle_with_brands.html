@@ -10,18 +10,20 @@
 <form th:action="@{/saveVehicleAndBrand}" th:object="${form}" method="post">
   <input type="hidden" th:field="*{vehicle.id}"/>
   <label>Price: <input type="text" th:field="*{vehicle.price}"/></label><br/>
-  <label>Release Date: <input type="date" th:field="*{vehicle.year}"/></label><br/>
+  <label>Release Date: <input type="text" th:field="*{vehicle.year}"/></label><br/>
   <label>Mileage: <input type="text" th:field="*{vehicle.mileage}"/></label><br/>
   <input type="hidden" th:field="*{vehicle.brand.id}"/>
   <input type="hidden" th:field="*{vehicle.brand.vehicle}"/>
-  <label>Brand:
-    <select type="text" th:field="*{vehicle.brand}">
-      <option th:each="brand1 : *{brands}"
-              th:value="${brand1.id}"
-              th:text="${brand1.name}">
-      </option>
+  <label>Brand name: <input type="text" th:field="*{vehicle.brand.name}"/></label><br/>
+  <label>Type:
+    <select th:field="*{vehicle.brand.type}">
+      <option th:each="type : ${T(com.company.carpark.datamodel.constant.Type).values()}"
+              th:value="${type}" th:text="${type}"></option>
     </select>
   </label><br/>
+  <label>Count of Seats: <input type="text" th:field="*{vehicle.brand.countOfSeats}"/></label><br/>
+  <label>Capacity: <input type="text" th:field="*{vehicle.brand.capacity}"/></label><br/>
+  <label>Tank: <input type="text" th:field="*{vehicle.brand.tank}"/></label><br/>
   <input type="submit" value="Save Vehicle"/>
 </form>
 
