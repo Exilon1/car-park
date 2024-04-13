@@ -11,11 +11,12 @@ import jakarta.persistence.OneToOne;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
+@Data
 @Entity
 @Getter
 @Setter

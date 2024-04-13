@@ -1,6 +1,7 @@
 package com.company.carpark.datamodel;
 
 import com.company.carpark.datamodel.constant.Type;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,12 +12,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
+@Data
 @Entity
+@Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +30,7 @@ public class Brand {
   @Column(name = "id", nullable = false)
   private Long id;
 
+  @JsonIgnore
   @OneToOne(optional = false)
   @JoinColumn(name = "vehicle_id", unique = true, nullable = false, updatable = false)
   private Vehicle vehicle;

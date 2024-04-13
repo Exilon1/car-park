@@ -9,14 +9,13 @@ import com.company.carpark.service.VehicleService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping
@@ -32,10 +31,22 @@ public class VehicleController {
   @Autowired
   private BrandRepository brandRepository;
 
+  @ResponseBody
+  @GetMapping("/json-vehicles")
+  public List<Vehicle> getJsonVehicles() {
+    return vehicleRepository.findAllByOrderById();
+  }
+
+  @ResponseBody
+  @GetMapping("/json-brands")
+  public List<Brand> getJsonBrands() {
+    return brandRepository.findAllByOrderById();
+  }
+
   @GetMapping("/vehicles")
   public String getAllVehicles(Model model) {
-    List<Vehicle> vehicles = vehicleService.getAllVehicles();
-    List<Brand> brands = brandService.getBrandByVehicleIn(vehicles);
+    List<Vehicle> vehicles = vehicleRepository.findAllByOrderById();
+    List<Brand> brands = brandRepository.findByVehicleIn(vehicles);
     model.addAttribute("vehicles", vehicles);
     model.addAttribute("brands", brands);
 
@@ -44,7 +55,7 @@ public class VehicleController {
 
   @GetMapping("/brands")
   public String showBrandList(Model model) {
-    model.addAttribute("brands", brandService.getAllBrands());
+    model.addAttribute("brands", brandRepository.findAll());
     return "brands";
   }
 
@@ -98,7 +109,6 @@ public class VehicleController {
     return "create-vehicle_with_brands";
   }
 
-  @Transactional
   @PostMapping("/saveVehicleAndBrand")
   public String saveVehicleAndBrand(@ModelAttribute("form") VehicleAndBrandForm form) {
     Vehicle vehicle = form.getVehicle();
@@ -111,7 +121,6 @@ public class VehicleController {
     return "redirect:/vehicles";
   }
 
-  @Transactional
   @PostMapping("/saveBrand")
   public String saveBrand(@ModelAttribute("form") BrandForm form) {
     brandRepository.save(form.getBrand());

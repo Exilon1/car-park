@@ -11,5 +11,5 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
   List<Brand> findByVehicleIn(List<Vehicle> vehicles);
 
-  Brand findByVehicle(Vehicle vehicle);
+  List<Brand> findAllByOrderById();
 }
