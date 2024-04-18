@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -32,7 +33,11 @@ public class Brand {
 
   @JsonIgnore
   @OneToOne(optional = false)
-  @JoinColumn(name = "vehicle_id", unique = true, nullable = false, updatable = false)
+  @JoinColumn(
+      name = "vehicle_id",
+      unique = true,
+      nullable = false,
+      updatable = false)
   private Vehicle vehicle;
 
   @Column(name = "name")
@@ -51,4 +56,10 @@ public class Brand {
   @Column(name = "tank")
   private Float tank;
 
+  @Transient
+  private Long vehicleId;
+
+  public Long getVehicleId() {
+    return (vehicle != null) ? vehicle.getId() : null;
+  }
 }

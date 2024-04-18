@@ -1,5 +1,6 @@
 package com.company.carpark.datamodel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
@@ -38,9 +40,17 @@ public class Vehicle {
   @Column(name = "mileage")
   private Double mileage;
 
+  @JsonIgnore
   @OneToOne(mappedBy = "vehicle",
       cascade = CascadeType.REMOVE,
       orphanRemoval = true,
       fetch = FetchType.LAZY)
   private Brand brand;
+
+  @Transient
+  private Long brandId;
+
+  public Long getBrandId() {
+    return (brand != null) ? brand.getId() : null;
+  }
 }
