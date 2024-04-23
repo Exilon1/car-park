@@ -8,17 +8,21 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Data
 @Entity
 @Getter
 @Setter
@@ -47,10 +51,47 @@ public class Vehicle {
       fetch = FetchType.LAZY)
   private Brand brand;
 
+  @JsonIgnore
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "enterprise_id")
+  private Enterprise enterprise;
+
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "vehicle_driver",
+      joinColumns = @JoinColumn(name = "vehicle_id"),
+      inverseJoinColumns = @JoinColumn(name = "driver_id"))
+  private Set<Driver> drivers = new HashSet<>();
+
+  @JsonIgnore
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "active_driver_id")
+  private Driver activeDriver;
+
   @Transient
   private Long brandId;
 
+  @Transient
+  private Long enterpriseId;
+
+  public Long getEnterpriseId() {
+    return (enterprise != null) ? enterprise.getId() : null;
+  }
+
   public Long getBrandId() {
     return (brand != null) ? brand.getId() : null;
+  }
+
+  public void setActiveDriver(Driver driver) {
+    if (driver == null) {
+      return;
+    }
+
+    if (activeDriver != null) {
+      activeDriver.setActive(false);
+    }
+
+    driver.setActive(true);
+    this.activeDriver = driver;
   }
 }

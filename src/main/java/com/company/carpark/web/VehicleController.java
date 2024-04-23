@@ -1,8 +1,12 @@
 package com.company.carpark.web;
 
 import com.company.carpark.datamodel.Brand;
+import com.company.carpark.datamodel.Driver;
+import com.company.carpark.datamodel.Enterprise;
 import com.company.carpark.datamodel.Vehicle;
 import com.company.carpark.repository.BrandRepository;
+import com.company.carpark.repository.DriversRepository;
+import com.company.carpark.repository.EnterpriseRepository;
 import com.company.carpark.repository.VehicleRepository;
 import com.company.carpark.service.BrandService;
 import com.company.carpark.service.VehicleService;
@@ -30,6 +34,10 @@ public class VehicleController {
   private VehicleRepository vehicleRepository;
   @Autowired
   private BrandRepository brandRepository;
+  @Autowired
+  private EnterpriseRepository enterpriseRepository;
+  @Autowired
+  private DriversRepository driversRepository;
 
   @ResponseBody
   @GetMapping("/json-vehicles")
@@ -41,6 +49,18 @@ public class VehicleController {
   @GetMapping("/json-brands")
   public List<Brand> getJsonBrands() {
     return brandRepository.findAllByOrderById();
+  }
+
+  @ResponseBody
+  @GetMapping("/json-drivers")
+  public List<Driver> getJsonDrivers() {
+    return driversRepository.findAllByOrderById();
+  }
+
+  @ResponseBody
+  @GetMapping("/json-enterprise")
+  public List<Enterprise> getJsonEnterprise() {
+    return enterpriseRepository.findAllByOrderById();
   }
 
   @GetMapping("/vehicles")
