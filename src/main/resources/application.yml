@@ -13,9 +13,13 @@ spring:
     suffix: .html
     mode: HTML
 
+#  sql:
+#    init:
+#      mode: always
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 #    properties:
 #      hibernate:
 #        default-schema: my_schema

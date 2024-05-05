@@ -3,13 +3,13 @@ package com.company.carpark.web;
 import com.company.carpark.datamodel.Brand;
 import com.company.carpark.datamodel.Driver;
 import com.company.carpark.datamodel.Enterprise;
+import com.company.carpark.datamodel.Manager;
 import com.company.carpark.datamodel.Vehicle;
 import com.company.carpark.repository.BrandRepository;
 import com.company.carpark.repository.DriversRepository;
 import com.company.carpark.repository.EnterpriseRepository;
+import com.company.carpark.repository.ManagerRepository;
 import com.company.carpark.repository.VehicleRepository;
-import com.company.carpark.service.BrandService;
-import com.company.carpark.service.VehicleService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,11 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class VehicleController {
 
   @Autowired
-  private VehicleService vehicleService;
-  @Autowired
-  private BrandService brandService;
-
-  @Autowired
   private VehicleRepository vehicleRepository;
   @Autowired
   private BrandRepository brandRepository;
@@ -38,6 +33,8 @@ public class VehicleController {
   private EnterpriseRepository enterpriseRepository;
   @Autowired
   private DriversRepository driversRepository;
+  @Autowired
+  private ManagerRepository managerRepository;
 
   @ResponseBody
   @GetMapping("/json-vehicles")
@@ -61,6 +58,12 @@ public class VehicleController {
   @GetMapping("/json-enterprise")
   public List<Enterprise> getJsonEnterprise() {
     return enterpriseRepository.findAllByOrderById();
+  }
+
+  @ResponseBody
+  @GetMapping("/json-managers")
+  public List<Manager> getJsonManager() {
+    return managerRepository.findAllByOrderByUsername();
   }
 
   @GetMapping("/vehicles")

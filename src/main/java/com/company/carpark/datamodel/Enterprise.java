@@ -3,14 +3,20 @@ package com.company.carpark.datamodel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,11 +49,21 @@ public class Enterprise {
   @OneToMany(mappedBy = "enterprise")
   private List<Driver> drivers = new ArrayList<>();
 
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(name = "enterprise_manager",
+      joinColumns = @JoinColumn(name = "enterprise_id"),
+      inverseJoinColumns = @JoinColumn(name = "manager_id"))
+  private Set<Manager> managers = new HashSet<>();
+
   @Transient
   private List<Long> vehicleIds;
 
   @Transient
   private List<Long> driverIds;
+
+  @Transient
+  private List<String> managerUsernames;
 
   public List<Long> getVehicleIds() {
     return vehicles != null
@@ -61,6 +77,14 @@ public class Enterprise {
     return drivers != null
         ? drivers.stream()
         .map(Driver::getId)
+        .collect(Collectors.toList())
+        : Collections.emptyList();
+  }
+
+  public List<String> getManagerUsernames() {
+    return managers != null
+        ? managers.stream()
+        .map(Manager::getUsername)
         .collect(Collectors.toList())
         : Collections.emptyList();
   }
