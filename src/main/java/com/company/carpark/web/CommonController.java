@@ -5,25 +5,35 @@ import com.company.carpark.datamodel.Driver;
 import com.company.carpark.datamodel.Enterprise;
 import com.company.carpark.datamodel.Manager;
 import com.company.carpark.datamodel.Vehicle;
+import com.company.carpark.datamodel.security.AuthorityUser;
+import com.company.carpark.exception.PermissionException;
 import com.company.carpark.repository.BrandRepository;
 import com.company.carpark.repository.DriversRepository;
 import com.company.carpark.repository.EnterpriseRepository;
 import com.company.carpark.repository.ManagerRepository;
 import com.company.carpark.repository.VehicleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping
-public class VehicleController {
+public class CommonController {
 
   @Autowired
   private VehicleRepository vehicleRepository;
@@ -149,5 +159,88 @@ public class VehicleController {
     brandRepository.save(form.getBrand());
 
     return "redirect:/brands";
+  }
+
+  @PostMapping("/addEnterprise")
+  public ResponseEntity<Enterprise> addEnterprise(
+      @AuthenticationPrincipal AuthorityUser userDetails,
+      @RequestBody Enterprise enterpriseDetails) {
+    Manager manager = userDetails.getManager();
+    enterpriseDetails.setManagers(Set.of(manager));
+    final Enterprise updatedEnterprise = enterpriseRepository.save(enterpriseDetails);
+    return ResponseEntity.ok(updatedEnterprise);
+  }
+
+  @PostMapping("/addVehicle")
+  public ResponseEntity<Vehicle> addVehicle(@RequestBody Vehicle vehicleDetails) {
+    Brand brand = brandRepository.findById(vehicleDetails.getBrandId())
+        .orElseThrow(() -> new EntityNotFoundException("Brand not found for this id :: "
+            + vehicleDetails.getBrandId()));
+
+    final Vehicle updatedVehicle = vehicleRepository.save(vehicleDetails);
+    brand.setVehicle(updatedVehicle);
+    brandRepository.save(brand);
+    return ResponseEntity.ok(updatedVehicle);
+  }
+
+  @PutMapping("/updateEnterprise/{id}")
+  public ResponseEntity<Enterprise> updateEnterprise(
+      @AuthenticationPrincipal AuthorityUser userDetails,
+      @PathVariable Long id,
+      @RequestBody Enterprise enterpriseDetails) {
+    Manager manager = userDetails.getManager();
+
+    if (!manager.getEnterprises().stream().map(Enterprise::getId).toList().contains(id)) {
+      throw new PermissionException("Manager with id=" + manager.getId()
+          + " has no permission to update Enterprise id=" + id, HttpStatus.FORBIDDEN);
+    }
+
+    Enterprise enterprise = enterpriseRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Enterprise not found for this id :: " + id));
+
+    enterprise.setName(enterpriseDetails.getName());
+    enterprise.setCity(enterpriseDetails.getCity());
+
+    final Enterprise updatedEnterprise = enterpriseRepository.save(enterprise);
+    return ResponseEntity.ok(updatedEnterprise);
+  }
+
+  @PutMapping("/updateVehicle/{id}")
+  public ResponseEntity<Vehicle> updateVehicle(
+      @AuthenticationPrincipal AuthorityUser userDetails,
+      @PathVariable Long id,
+      @RequestBody Vehicle vehicleDetails) {
+    Manager manager = userDetails.getManager();
+    Vehicle vehicle = vehicleRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Vehicle not found for this id :: " + id));
+    Brand brand = brandRepository.findById(vehicleDetails.getBrandId())
+        .orElseThrow(() -> new EntityNotFoundException("Brand not found for this id :: "
+            + vehicleDetails.getBrandId()));
+
+    if (manager.getEnterprises().stream().map(Enterprise::getVehicles).noneMatch(list
+        -> list.stream().map(Vehicle::getId).toList().contains(id))) {
+      throw new PermissionException("Manager with id=" + manager.getId()
+          + " has no permission to update Enterprise id=" + id, HttpStatus.FORBIDDEN);
+    }
+
+    brand.setVehicle(vehicle);
+    vehicle.setYear(vehicleDetails.getYear());
+    vehicle.setPrice(vehicleDetails.getPrice());
+    vehicle.setMileage(vehicleDetails.getMileage());
+    vehicle.setBrand(brand);
+
+    final Vehicle updatedVehicle = vehicleRepository.save(vehicle);
+    brandRepository.save(brand);
+    return ResponseEntity.ok(updatedVehicle);
+  }
+
+  @ExceptionHandler(EntityNotFoundException.class)
+  public ResponseEntity<String> handleNotFoundException(EntityNotFoundException ex) {
+    return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(PermissionException.class)
+  public ResponseEntity<String> handlePermissionException(PermissionException ex) {
+    return new ResponseEntity<>(ex.getMessage(), ex.getHttpStatus());
   }
 }

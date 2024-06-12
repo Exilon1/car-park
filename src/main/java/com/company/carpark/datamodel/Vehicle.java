@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vehicle {
@@ -69,7 +71,7 @@ public class Vehicle {
   private Driver activeDriver;
 
   @Transient
-  private Long brandId;
+  public Long brandId;
 
   @Transient
   private Long enterpriseId;
@@ -79,7 +81,7 @@ public class Vehicle {
   }
 
   public Long getBrandId() {
-    return (brand != null) ? brand.getId() : null;
+    return brandId != null ? brandId : ((brand != null) ? brand.getId() : null);
   }
 
   public void setActiveDriver(Driver driver) {

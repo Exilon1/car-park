@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Enterprise {
@@ -42,7 +44,7 @@ public class Enterprise {
   private String city;
 
   @JsonIgnore
-  @OneToMany(mappedBy = "enterprise")
+  @OneToMany(mappedBy = "enterprise", fetch = FetchType.EAGER)
   private List<Vehicle> vehicles = new ArrayList<>();
 
   @JsonIgnore
@@ -66,26 +68,33 @@ public class Enterprise {
   private List<String> managerUsernames;
 
   public List<Long> getVehicleIds() {
-    return vehicles != null
+    return vehicleIds != null ? vehicleIds : (vehicles != null
         ? vehicles.stream()
         .map(Vehicle::getId)
         .collect(Collectors.toList())
-        : Collections.emptyList();
+        : Collections.emptyList());
   }
 
   public List<Long> getDriverIds() {
-    return drivers != null
-        ? drivers.stream()
-        .map(Driver::getId)
-        .collect(Collectors.toList())
-        : Collections.emptyList();
+    return driverIds != null ? driverIds :
+        (drivers != null
+            ? drivers.stream()
+            .map(Driver::getId)
+            .collect(Collectors.toList())
+            : Collections.emptyList());
   }
 
   public List<String> getManagerUsernames() {
-    return managers != null
-        ? managers.stream()
-        .map(Manager::getUsername)
-        .collect(Collectors.toList())
-        : Collections.emptyList();
+    return managerUsernames != null ? managerUsernames :
+        (managers != null
+            ? managers.stream()
+            .map(Manager::getUsername)
+            .collect(Collectors.toList())
+            : Collections.emptyList());
+  }
+
+  @Override
+  public String toString() {
+    return "Enterprise id = " + id;
   }
 }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Driver {
@@ -60,17 +62,18 @@ public class Driver {
   private Long enterpriseId;
 
   public Long getEnterpriseId() {
-    return (enterprise != null) ? enterprise.getId() : null;
+    return enterpriseId != null ? enterpriseId : ((enterprise != null) ? enterprise.getId() : null);
   }
 
   @Transient
   private List<Long> vehicleIds;
 
   public List<Long> getVehicleIds() {
-    return vehicles != null
-        ? vehicles.stream()
-        .map(Vehicle::getId)
-        .collect(Collectors.toList())
-        : Collections.emptyList();
+    return vehicleIds != null ? vehicleIds :
+        (vehicles != null
+            ? vehicles.stream()
+            .map(Vehicle::getId)
+            .collect(Collectors.toList())
+            : Collections.emptyList());
   }
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Brand {
@@ -34,8 +36,7 @@ public class Brand {
   @JoinColumn(
       name = "vehicle_id",
       unique = true,
-      nullable = false,
-      updatable = false)
+      nullable = false)
   private Vehicle vehicle;
 
   @Column(name = "name")
@@ -58,6 +59,6 @@ public class Brand {
   private Long vehicleId;
 
   public Long getVehicleId() {
-    return (vehicle != null) ? vehicle.getId() : null;
+    return vehicleId != null ? vehicleId : ((vehicle != null) ? vehicle.getId() : null);
   }
 }

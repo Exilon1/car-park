@@ -43,17 +43,18 @@ public class Manager {
   private String role;
 
   @JsonIgnore
-  @ManyToMany(mappedBy = "managers", fetch = FetchType.LAZY)
+  @ManyToMany(mappedBy = "managers", fetch = FetchType.EAGER)
   private Set<Enterprise> enterprises = new HashSet<>();
 
   @Transient
   private List<Long> enterpriseIds;
 
   public List<Long> getEnterpriseIds() {
-    return enterprises != null
-        ? enterprises.stream()
-        .map(Enterprise::getId)
-        .collect(Collectors.toList())
-        : Collections.emptyList();
+    return enterpriseIds != null ? enterpriseIds :
+        (enterprises != null
+            ? enterprises.stream()
+            .map(Enterprise::getId)
+            .collect(Collectors.toList())
+            : Collections.emptyList());
   }
 }
